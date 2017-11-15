@@ -1,0 +1,42 @@
+with "../../../boards/config";
+with "../../../hal/HAL";
+with "../cortex_m/cortex_m4f";
+
+library project STM32F411xx is
+
+   for Target use "arm-eabi";
+   for Runtime ("Ada") use Config.RTS & "-stm32f4";
+
+   for Library_Name use "stm32f411";
+   for Library_Kind use "static";
+   for Library_Dir use "lib/stm32f411xx/" & Config.RTS;
+   for Object_Dir use "obj/stm32f411xx/" & Config.RTS;
+
+   for Source_Dirs use Project'Source_Dirs &
+     ("svd/stm32f411xx",
+      "devices/stm32f411xx",
+      "drivers/adc_stm32f411",
+      "drivers/i2c_stm32f4",
+      "drivers/usart_stm32f411",
+      "drivers/timer_stm32f411",
+      "drivers/pwm_stm32f411",
+      "drivers/power_control_stm32f4",
+      "drivers/dma",
+      "drivers/dma_interrupts",
+      "drivers");
+      
+   for Excluded_Source_Files use
+   (
+    "stm32-dac.adb",
+    "stm32-dac.ads",
+    "stm32-dcmi.adb",
+    "stm32-dcmi.ads",
+    "stm32-rng.adb",
+    "stm32-rng.ads",
+    "stm32-rng-interrupts.adb",
+    "stm32-rng-interrupts.ads"
+   );
+
+   package Compiler renames Config.Compiler;
+
+end STM32F411xx;

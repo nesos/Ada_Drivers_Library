@@ -80,9 +80,15 @@ BOARDS = {
                                   '../stm32_common/dma2d',
                                   '../stm32_common/otm8009a',
                                   '../stm32_common/sdcard',
-                                  '../stm32_common/sdram']},
-    }
+                                  '../stm32_common/sdram']},    
+    'STM32F411_Nucleo': {
+    'rts_board':             'stm32f4',
+    'rts_profiles':          ['ravenscar-sfp'],
+    'target':                'arm-eabi',
+    'mcu':                   'arch/ARM/STM32/stm32f411xx',
+    'source_dirs':           ['../stm32_common/common']},
 
+    }
 
 FOLDERS = {'Crazyflie': 'crazyflie',
            'HiFive1': 'HiFive1',
@@ -93,7 +99,8 @@ FOLDERS = {'Crazyflie': 'crazyflie',
            'STM32F429_Discovery': 'stm32f429_discovery',
            'STM32F469_Discovery': 'stm32f469_discovery',
            'STM32F746_Discovery': 'stm32f746_discovery',
-           'STM32F769_Discovery': 'stm32f769_discovery'}
+           'STM32F769_Discovery': 'stm32f769_discovery',
+           'STM32F411_Nucleo': 'stm32f411_nucleo'}
 
 
 def gen_project(board_name, rts):
