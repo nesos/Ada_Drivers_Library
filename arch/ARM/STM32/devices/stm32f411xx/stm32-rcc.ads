@@ -47,6 +47,9 @@ package STM32.RCC is
 
 --     procedure CCMDATARAMEN_Clock_Enable with Inline;
 --     procedure DMA2D_Clock_Enable with Inline;
+
+   procedure Initialize_SysClk;
+
    procedure WWDG_Clock_Enable with Inline;
 
 --     procedure SDIO_Clock_Enable with Inline;

@@ -45,10 +45,39 @@ package body STM32.RCC is
    function To_APB2RSTR_T is new Ada.Unchecked_Conversion
      (UInt32, APB2RSTR_Register);
 
+
+
+   procedure Initialize_SysClk is
+   begin
+
+
+      RCC_Periph.CR.HSEON := False;
+      RCC_Periph.CR.HSION := True;
+      while (not RCC_Periph.CR.HSIRDY) loop
+         null;
+      end loop;
+      RCC_Periph.CFGR.SW.Val := 0;
+
+      RCC_Periph.CR.PLLON := False;
+
+      RCC_Periph.PLLCFGR.PLLSRC := False;
+      RCC_Periph.PLLCFGR.PLLM.Val := 16;
+      RCC_Periph.PLLCFGR.PLLN.Val := 400;
+      RCC_Periph.PLLCFGR.PLLP.Val := 1;
+      RCC_Periph.PLLCFGR.PLLQ.Val := 4;
+
+      RCC_Periph.CR.PLLON := True;
+      while (not RCC_Periph.CR.PLLRDY) loop
+         null;
+      end loop;
+      RCC_Periph.CFGR.SW.Val := 2;
+
+   end Initialize_SysClk;
+
+
    ---------------------------------------------------------------------------
    -------  Enable/Disable/Reset Routines  -----------------------------------
    ---------------------------------------------------------------------------
-
 
    procedure WWDG_Clock_Enable is
    begin
