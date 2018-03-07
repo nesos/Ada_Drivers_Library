@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------------
 --                                                                          --
---                        Copyright (C) 2016, AdaCore                       --
+--                        Copyright (C) 2017, AdaCore                       --
 --                                                                          --
 --  Redistribution and use in source and binary forms, with or without      --
 --  modification, are permitted provided that the following conditions are  --
@@ -29,11 +29,54 @@
 --                                                                          --
 ------------------------------------------------------------------------------
 
-package STM32.Power_Control is
+with File_IO; use File_IO;
 
-   procedure Enable;
-   --  Enable power control module
+package body Command_Line.Filesystem.Remove_Directory is
 
-   procedure Disable_Backup_Domain_Protection;
-   procedure Enable_Backup_Domain_Protection;
-end STM32.Power_Control;
+   -------------
+   -- Execute --
+   -------------
+
+   overriding procedure Execute
+     (This     : in out Rmdir_Cmd;
+      Args     : in out Arguments'Class;
+      Put      : Put_Procedure;
+      Put_Line : Put_Line_Procedure)
+   is
+      pragma Unreferenced (This, Put);
+   begin
+      loop
+         declare
+            Arg : constant String := Args.Next;
+            Status : Status_Code;
+         begin
+            if Arg'Length = 0 then
+               return;
+            end if;
+
+            Status := File_IO.Remove_Directory (Arg);
+
+            if Status /= OK then
+               Put_Line ("Cannot remove directory '" & Arg & "': " &
+                           Status'Img);
+            end if;
+         end;
+      end loop;
+   end Execute;
+
+   ----------
+   -- Help --
+   ----------
+
+   overriding
+   procedure Help (This     : in out Rmdir_Cmd;
+                   Put      : Put_Procedure;
+                   Put_Line : Put_Line_Procedure)
+   is
+      pragma Unreferenced (Put, This);
+   begin
+      Put_Line ("Usage: rmdir [DIRECTORY]...");
+      Put_Line ("Remove the directoy(ries) if they are empty.");
+   end Help;
+
+end Command_Line.Filesystem.Remove_Directory;

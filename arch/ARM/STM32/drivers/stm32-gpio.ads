@@ -119,11 +119,20 @@ package STM32.GPIO is
                                    Pull_Up   => 1,
                                    Pull_Down => 2);
 
-   type GPIO_Port_Configuration is record
-      Mode        : Pin_IO_Modes;
-      Output_Type : Pin_Output_Types;
-      Speed       : Pin_Output_Speeds;
-      Resistors   : Internal_Pin_Resistors;
+   --  see the Reference Manual, table 35, section 8.3
+   type GPIO_Port_Configuration (Mode : Pin_IO_Modes := Mode_In) is record
+      Resistors : Internal_Pin_Resistors;
+      case Mode is
+         when Mode_In | Mode_Analog =>
+            null;
+         when Mode_Out =>
+            Output_Type : Pin_Output_Types;
+            Speed       : Pin_Output_Speeds;
+         when Mode_AF =>
+            AF_Output_Type : Pin_Output_Types;
+            AF_Speed       : Pin_Output_Speeds;
+            AF             : GPIO_Alternate_Function;
+      end case;
    end record;
 
    type GPIO_Point is new HAL.GPIO.GPIO_Point with record
@@ -151,6 +160,7 @@ package STM32.GPIO is
 
    overriding
    function Set (This : GPIO_Point) return Boolean with
+     Pre => Pin_IO_Mode (This) /= Mode_AF,
      Inline;
    --  Returns True if the bit specified by This.Pin is set (not zero) in the
    --  input data register of This.Port.all; returns False otherwise.
@@ -173,6 +183,11 @@ package STM32.GPIO is
    --  For This.Port.all, negates the output data register bit specified by
    --  This.Pin (one becomes zero and vice versa). Other pins are unaffected.
 
+   procedure Drive (This : in out GPIO_Point; Condition : Boolean) with
+      Post => (This.Set = Condition),
+      Inline;
+   --  Drives This high or low (set or clear) based on the value of Condition
+
    procedure Lock (This : GPIO_Point) with
      Pre  => not Locked (This),
      Post => Locked (This);
@@ -187,6 +202,8 @@ package STM32.GPIO is
       Config : GPIO_Port_Configuration);
    --  For Point.Pin on the Point.Port.all, configures the
    --  characteristics specified by Config
+
+   function Pin_IO_Mode (This : GPIO_Point) return Pin_IO_Modes with Inline;
 
    function Interrupt_Line_Number
      (This : GPIO_Point) return EXTI.External_Line_Number;
